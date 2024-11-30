@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient List</title>
+</head>
+<body>
+    <h1>Patients</h1>
+    <a href="{% url 'create_patient' %}">Add New Patient</a>
+    <ul>
+        {% for patient in patients %}
+            <li>
+                {{ patient.first_name }} {{ patient.last_name }} - {{ patient.status }}
+                <a href="{% url 'patient_detail' patient.pk %}">Details</a>
+                <a href="{% url 'update_patient' patient.pk %}">Edit</a>
+                <a href="{% url 'delete_patient' patient.pk %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
