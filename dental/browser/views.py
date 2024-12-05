@@ -7,9 +7,14 @@ from rest_framework import status
 from .serializers import PatientSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import os
 
 def index(request):
     return render(request, 'calendar.html')
+
 
 # List all patients or create a new patient
 @api_view(['GET', 'POST'])
@@ -25,7 +30,8 @@ def patient_list_create(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
 
 
 # Retrieve, update, or delete a patient
@@ -78,3 +84,30 @@ def patient_search(request):
     # Serialize and return the data
     serializer = PatientSerializer(patients, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+def save_selected_patients(request):
+    if request.method == "POST":
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            selected_patients = data.get("patients", [])
+            if not selected_patients:
+                return JsonResponse({"error": "No patients selected."}, status=400)
+
+            # Define the path to save the file
+            react_project_path = "F:/projects/Python/Kai gao project/react/dentalfront"
+            file_path = os.path.join(react_project_path, "patient.json")
+
+            # Save data to the JSON file
+            with open(file_path, "w") as json_file:
+                json.dump({"patients": selected_patients}, json_file, indent=2)
+
+            return JsonResponse({"message": "Data saved successfully."}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method."}, status=400)

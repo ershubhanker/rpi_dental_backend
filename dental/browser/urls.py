@@ -9,5 +9,6 @@ urlpatterns = [
     path('api/patients/', patient_list_create, name='patient_list_create'),
     path('api/patients/<int:pk>/', patient_detail, name='patient_detail'),
     path('api/patients/search/', patient_search, name='patient_search'),
+    path('api/patients/search/save-selected/', patient_search, name='patient_search'),
 
 ]
