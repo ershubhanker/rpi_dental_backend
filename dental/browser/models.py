@@ -17,3 +17,19 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"{self.first_name or 'Unknown'} {self.last_name or ''}".strip()
+
+
+class Meeting(models.Model):
+    patient_details = models.ForeignKey(Patient, on_delete=models.CASCADE, blank=True,null=True)
+    title = models.CharField(max_length=100, blank=True,null=True)
+    doctor_name = models.CharField(max_length=100)
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.patient_details} with {self.doctor_name} on {self.start_datetime.strftime('%Y-%m-%d %H:%M')}"
+
+    # class Meta:
+    #     ordering = ['start_datetime']
+    #     verbose_name = "Meeting"
+    #     verbose_name_plural = "Meetings"
